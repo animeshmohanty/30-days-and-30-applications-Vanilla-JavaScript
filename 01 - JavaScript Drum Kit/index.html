@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS Drum Kit</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+  <div class="keys">
+    <div data-key="65" class="key">
+      <kbd>A</kbd>
+      <span class="sound">clap</span>
+    </div>
+    <div data-key="83" class="key">
+      <kbd>S</kbd>
+      <span class="sound">hihat</span>
+    </div>
+    <div data-key="68" class="key">
+      <kbd>D</kbd>
+      <span class="sound">kick</span>
+    </div>
+    <div data-key="70" class="key">
+      <kbd>F</kbd>
+      <span class="sound">openhat</span>
+    </div>
+    <div data-key="71" class="key">
+      <kbd>G</kbd>
+      <span class="sound">boom</span>
+    </div>
+    <div data-key="72" class="key">
+      <kbd>H</kbd>
+      <span class="sound">ride</span>
+    </div>
+    <div data-key="74" class="key">
+      <kbd>J</kbd>
+      <span class="sound">snare</span>
+    </div>
+    <div data-key="75" class="key">
+      <kbd>K</kbd>
+      <span class="sound">tom</span>
+    </div>
+    <div data-key="76" class="key">
+      <kbd>L</kbd>
+      <span class="sound">tink</span>
+    </div>
+  </div>
+
+  <audio data-key="65" src="sounds/clap.wav"></audio>
+  <audio data-key="83" src="sounds/hihat.wav"></audio>
+  <audio data-key="68" src="sounds/kick.wav"></audio>
+  <audio data-key="70" src="sounds/openhat.wav"></audio>
+  <audio data-key="71" src="sounds/boom.wav"></audio>
+  <audio data-key="72" src="sounds/ride.wav"></audio>
+  <audio data-key="74" src="sounds/snare.wav"></audio>
+  <audio data-key="75" src="sounds/tom.wav"></audio>
+  <audio data-key="76" src="sounds/tink.wav"></audio>
+  
+<script>
+
+   function playSound(e) {
+     const audio = document.querySelector(`audio[data-key = "${e.keyCode}"]`); // to match the keycode 
+     const key = document.querySelector(`.key[data-key = "${e.keyCode}"]`);
+     if(!audio) return ; //stop the function from running alltogether.
+     audio.currentTime = 0; //Rewind to the start. So no matter how many times you push in succession it wont wait for finish.
+     audio.play(); //since we have the audio element, we can play it.
+     key.classList.add('playing') //same as key.addClass('playing') in JQuery. Use it to highlight the pressed key.
+     //The keys will be first highlighted but the highlight wont go away, 
+     //because we are adding a class and not removing it.
+    }
+    
+
+   function removeTransition(e) {
+     if(e.propertyName !== 'transform') return ; //skip it if it is not a transform. 
+     //when the transform completes that is when we are going to reverse the changes. 
+     //'this' is always equal to whatever got called against it. remove the class of playing.
+     //so after i hit the key, the transitionend is gonna fire which is gonna remove the transition.
+     this.classList.remove('playing');
+   }
+
+   //now, i need to select every single key as i need to listen on transition end for on each one.
+   const keys = document.querySelectorAll('.key');
+   
+   //we cannot use keys.addEventListener('transitionend') because when you listen to an array of element 
+   //you cannot listen for all of them, so which will lead us to loop-over and attach an event listener 
+   //for every single element which is transitionend and when transition is ending, we will remove it.
+   keys.forEach(key => key.addEventListener('transitionend', removeTransition)); 
+   window.addEventListener('keydown',playSound);//Can attach the playsound function directly with keydown 
+   //function(e) calls event 
+   //by using function(e)but new function is better to make the code cleaner.
+   //when someone keys down, play the sound.
+
+
+
+</script>
+
+
+</body>
+</html>
